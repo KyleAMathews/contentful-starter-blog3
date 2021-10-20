@@ -39,6 +39,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       const nextPostSlug =
         index === posts.length - 1 ? null : posts[index + 1].slug
 
+      console.log(`creating page with ownerNodeId of ${post.id}`)
       createPage({
         path: `/blog/${post.slug}/`,
         component: blogPost,
