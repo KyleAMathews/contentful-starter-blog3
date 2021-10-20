@@ -42,8 +42,8 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       createPage({
         path: `/blog/${post.slug}/`,
         component: blogPost,
+        ownerNodeId: post.id,
         context: {
-          id: post.id,
           slug: post.slug,
           previousPostSlug,
           nextPostSlug,
