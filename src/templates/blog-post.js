@@ -5,7 +5,6 @@ import get from "lodash/get"
 import Seo from "../components/seo"
 import Layout from "../components/layout"
 import Hero from "../components/hero"
-import Tags from "../components/tags"
 import * as styles from "./blog-post.module.css"
 
 class BlogPostTemplate extends React.Component {
@@ -32,7 +31,6 @@ class BlogPostTemplate extends React.Component {
                 __html: post.body.childMarkdownRemark.html,
               }}
             />
-            <Tags tags={post.tags} />
             {(previous || next) && (
               <nav>
                 <ul className={styles.articleNavigation}>
@@ -79,7 +77,6 @@ export const pageQuery = graphql`
           timeToRead
         }
       }
-      tags
       description {
         childMarkdownRemark {
           excerpt
