@@ -3,6 +3,7 @@ const pMap = require(`p-map`)
 const _ = require(`lodash`)
 const fs = require(`fs`)
 const path = require(`path`)
+const awaitUntilChange = require(`./await-until-change`)
 
 async function setupSpace() {
   const client = contentful.createClient({
@@ -60,7 +61,9 @@ async function main() {
 
     try {
       let entry = await environment.getEntry(entryId)
-      entry.fields.body[`en-US`] = Math.random().toString()
+      entry.fields.title[
+        `en-US`
+      ] = `Auto generated posts ${entryId} — ${Math.random()}`
       entry = await entry.update()
       await entry.publish()
     } catch (e) {
@@ -69,31 +72,43 @@ async function main() {
     }
     console.log(`published update`)
 
-    let toDeleteCreate
-    const toDeleteCreatePath = path.join(__dirname, `to-delete-create.json`)
-    if (fs.existsSync(toDeleteCreatePath)) {
-      toDeleteCreate = JSON.parse(fs.readFileSync(toDeleteCreatePath))
-    }
+    // let toDeleteCreate
+    // const toDeleteCreatePath = path.join(__dirname, `to-delete-create.json`)
+    // if (fs.existsSync(toDeleteCreatePath)) {
+    // toDeleteCreate = JSON.parse(fs.readFileSync(toDeleteCreatePath))
+    // }
 
-    if (toDeleteCreate) {
-      const { deleteId, createId } = toDeleteCreate
+    // if (toDeleteCreate) {
+    // const { deleteId, createId } = toDeleteCreate
 
-      let deleteEntry = await environment.getEntry(deleteId)
-      deleteEntry = await deleteEntry.unpublish()
-      await deleteEntry.delete()
+    // let deleteEntry = await environment.getEntry(deleteId)
+    // deleteEntry = await deleteEntry.unpublish()
+    // await deleteEntry.delete()
 
-      await createEntry(environment, createId)
-      fs.writeFileSync(
-        toDeleteCreatePath,
-        JSON.stringify({ deleteId: createId, createId: deleteId })
-      )
-    } else {
-      await createEntry(environment, `100`)
-      fs.writeFileSync(
-        toDeleteCreatePath,
-        JSON.stringify({ deleteId: `100`, createId: `101` })
-      )
-    }
+    // await createEntry(environment, createId)
+    // fs.writeFileSync(
+    // toDeleteCreatePath,
+    // JSON.stringify({ deleteId: createId, createId: deleteId })
+    // )
+    // } else {
+    // await createEntry(environment, `100`)
+    // fs.writeFileSync(
+    // toDeleteCreatePath,
+    // JSON.stringify({ deleteId: `100`, createId: `101` })
+    // )
+    // }
+
+    const gcPromise = awaitUntilChange(
+      `https://contentfulstarterblog3.gatsbyjs.io/`
+    )
+    const rincPromise = awaitUntilChange(
+      `https://contentfulstarterblog3main.staging-gatsbyjs.io/`
+    )
+    const rincProdPromise = awaitUntilChange(
+      `https://contentfulstarterblog3rinc.gatsbyjs.io/`
+    )
+
+    await Promise.all([gcPromise, rincPromise, rincProdPromise])
   }
 }
 
