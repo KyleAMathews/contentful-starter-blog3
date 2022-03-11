@@ -12,6 +12,7 @@ class BlogPostTemplate extends React.Component {
     const post = get(this.props, `data.contentfulBlogPost`)
     const previous = get(this.props, `data.previous`)
     const next = get(this.props, `data.next`)
+    const mostRecent = get(this.props, `data.mostRecent.nodes[0]`)
 
     return (
       <Layout location={this.props.location}>
@@ -51,6 +52,20 @@ class BlogPostTemplate extends React.Component {
                 </ul>
               </nav>
             )}
+            {mostRecent && (
+              <nav>
+                <h3>Most recently updated blog post</h3>
+                <ul className={styles.articleNavigation}>
+                  {mostRecent && (
+                    <li>
+                      <Link to={`/blog/${mostRecent.slug}`} rel="prev">
+                        {mostRecent.title}
+                      </Link>
+                    </li>
+                  )}
+                </ul>
+              </nav>
+            )}
           </div>
         </div>
       </Layout>
@@ -81,6 +96,15 @@ export const pageQuery = graphql`
         childMarkdownRemark {
           excerpt
         }
+      }
+    }
+    mostRecent: allContentfulBlogPost(
+      sort: { fields: [updatedAt], order: DESC }
+      limit: 1
+    ) {
+      nodes {
+        title
+        slug
       }
     }
     previous: contentfulBlogPost(slug: { eq: $previousPostSlug }) {

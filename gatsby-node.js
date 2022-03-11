@@ -1,10 +1,10 @@
-const path = require('path')
+const path = require(`path`)
 
 exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions
 
   // Define a template for blog post
-  const blogPost = path.resolve('./src/templates/blog-post.js')
+  const blogPost = path.resolve(`./src/templates/blog-post.js`)
 
   const result = await graphql(
     `
@@ -40,7 +40,6 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       const nextPostSlug =
         index === posts.length - 1 ? null : posts[index + 1].slug
 
-      console.log(`creating page with ownerNodeId of ${post.id}`)
       createPage({
         path: `/blog/${post.slug}/`,
         component: blogPost,
