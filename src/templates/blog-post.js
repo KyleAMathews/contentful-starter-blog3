@@ -26,7 +26,7 @@ class BlogPostTemplate extends React.Component {
             {post.body.childMarkdownRemark.timeToRead} minute read
           </span>
           <div className={styles.article}>
-            <h1>post.title</h1>
+            <h1>{post.title}</h1>
             <div
               className={styles.body}
               dangerouslySetInnerHTML={{
